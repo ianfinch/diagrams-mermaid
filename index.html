@@ -1,0 +1,49 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Messaging Diagram</title>
+
+        <script src="mermaid.min.js"></script>
+        <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
+    </head>
+    <body>
+        <div id="help" class="hidden">
+            <h2>About</h2>
+            <p>
+The code for this app is on github at <a href="https://github.com/ianfinch/messaging-mermaid">ianfinch/messaging-mermaid</a>.
+All the clever stuff was already available at <a href="https://mermaid-js.github.io/">mermaid-js.github.io</a>.
+            </p>
+            <p>
+See <a href="https://ian-says.com/articles/netlify-github-website/">ian-says.com</a> for more information about how this was all put together, built, and hosted.
+            </p>
+            <p>
+Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>.
+            </p>
+            <button id="close-help">Close</button>
+        </div>
+        <h1>Messaging Diagram Editor</h1>
+        <div id="buttons">
+            <button id="about">About</button>
+            <button id="download">Download</button>
+            <button id="show-source" class="hidden">Source</button>
+            <button id="hide-source">Max</button>
+        </div>
+        <div id="editor-container">
+            <div id="editor">
+                <h2>Source</h2>
+                <textarea id="source" rows="20" cols="60">
+browser -> server: request
+server -> server: process
+participant database
+note over server,database: add DB calls
+server --> browser: response 
+note left of browser: display\nto user
+</textarea>
+            </div>
+        </div>
+        <div id="diagram"></div>
+        <script src="manage-input.js"></script>
+    </body>
+</html>
