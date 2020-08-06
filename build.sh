@@ -9,10 +9,6 @@ cp style.css public/
 cp manage-input.js public/
 cp favicon.ico public/
 
-if [[ ! -e mermaid ]] ; then
-    git clone https://github.com/mermaid-js/mermaid.git
+if [[ ! -e public/mermaid.min.js ]] ; then
+    curl https://cdn.jsdelivr.net/npm/mermaid > public/mermaid.min.js
 fi
-ls -l mermaid
-ls -l mermaid/dist
-ls -l mermaid/dist/mermaid.min.js
-cp mermaid/dist/mermaid.min.js public/
