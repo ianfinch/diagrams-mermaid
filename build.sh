@@ -12,4 +12,5 @@ cp favicon.ico public/
 if [[ ! -e mermaid ]] ; then
     git clone https://github.com/mermaid-js/mermaid.git
 fi
+ls -l mermaid
 cp mermaid/dist/mermaid.min.js public/
