@@ -9,6 +9,6 @@ cp style.css public/
 cp manage-input.js public/
 cp favicon.ico public/
 
-if [[ ! -e public/mermaid.min.js ]] ; then
-    curl https://cdn.jsdelivr.net/npm/mermaid > public/mermaid.min.js
-fi
+#if [[ ! -e public/mermaid.min.js ]] ; then
+    curl https://unpkg.com/mermaid@8.6.4/dist/mermaid.min.js > public/mermaid.min.js
+#fi
