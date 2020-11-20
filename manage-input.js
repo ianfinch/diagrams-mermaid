@@ -6,6 +6,7 @@ document.getElementById("about").addEventListener("click", showHelp);
 document.getElementById("close-help").addEventListener("click", closeHelp);
 document.getElementById("show-source").addEventListener("click", showSource);
 document.getElementById("hide-source").addEventListener("click", hideSource);
+document.getElementById("diagram-type").addEventListener("change", typeSelected);
 
 const mermaidConfig = {
     startOnLoad: false,
@@ -24,15 +25,66 @@ const mermaidConfig = {
         rightAngles: false,
     }
 };
-//mermaid.mermaidAPI.initialize(mermaidConfig);
 mermaid.initialize(mermaidConfig);
 
+const diagrams = {
+    classDiagram: ["Animal <|-- Duck",
+                   "Animal <|-- Fish",
+                   "Animal <|-- Zebra",
+                   "Animal : +int age",
+                   "Animal : +String gender",
+                   "Animal: +isMammal()",
+                   "Animal: +mate()",
+                   "class Duck{",
+                   "    +String beakColor",
+                   "    +swim()",
+                   "    +quack()",
+                   "}",
+                   "class Fish{",
+                   "    -int sizeInFeet",
+                   "    -canEat()",
+                   "}",
+                   "class Zebra{",
+                   "    +foo()",
+                   "    +bool is_wild",
+                   "    +run()",
+                   "}"].join("\n"),
+    "graph LR": ["S((Start)) -.-> R[/Request/] ==> P{In cache?}",
+                 "P -->|Yes| D[(Database)]",
+                 "P -->|No| C(Server)",
+                 "D & C --> A[\Response\]",
+                 "A -.-> E((End))"
+    ].join("\n"),
+    "graph TD": ["S((Start)) -.-> R[/Request/] ==> P{In cache?}",
+                 "P -->|Yes| D[(Database)]",
+                 "P -->|No| C(Server)",
+                 "D & C --> A[\Response\]",
+                 "A -.-> E((End))"
+    ].join("\n"),
+    pie: ["title Things not to blame it on",
+          '"Sunshine": 30',
+          '"Moonlight": 40',
+          '"Good Times": 50'
+    ].join("\n"),
+    sequenceDiagram: ["browser -> server: request",
+                      "server -> server: process",
+                      "participant database",
+                      "note over server,database: add DB calls here",
+                      "server --> browser: response ",
+                      "note left of browser: display to user"].join("\n")
+};
+
 setupFileDrop();
-updateDiagram();
+typeSelected();
 
 function formatSource(src) {
-    return "sequenceDiagram\n" + 
-           src.replace(/->/g, "->>");
+    const newType = document.getElementById("diagram-type").value;
+
+    if (newType === "sequenceDiagram") {
+        src = src.replace(/->/g, "->>");
+    }
+
+    return newType + "\n" + src;
 }
 
 function updateDiagram() {
@@ -46,7 +98,6 @@ function updateDiagram() {
 
     try {
         mermaid.mermaidAPI.render("diagram-image", formatSource(src), svg => {
-            svg = svg.replace(".messageText{fill:#333;stroke:#333;}", ".messageText{fill:#333;}");
             previousDiagram = svg;
             diagram.innerHTML = svg;
         });
@@ -70,11 +121,9 @@ function downloadSvg() {
     let svg = [...document.getElementById("diagram").children].filter(x => x.tagName === "svg")[0];
     svg.setAttribute("version", "1.1");
     svg.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-    let embeddedStyle = document.createElement("style");
     desc = document.createElement("desc");
     desc.textContent = document.getElementById("source").value;
     svg.insertBefore(desc, svg.childNodes[0]);
-    console.log(svg);
 
     let link = document.createElement("a");
     link.setAttribute("download", "diagram.svg");
@@ -129,6 +178,22 @@ function hideSource() {
     if (!hideButton.classList.contains("hidden")) {
         hideButton.classList.add("hidden");
     }
+}
+
+function typeSelected() {
+    const elem = document.getElementById("diagram-type");
+    const source = document.getElementById("source");
+
+    diagrams[elem.oldvalue] = source.value;
+
+    if (diagrams[elem.value]) {
+        source.value = diagrams[elem.value];
+    } else {
+        source.value = "";
+    }
+
+    elem.oldvalue = elem.value;
+    updateDiagram();
 }
 
 function dropHandler(evt) {

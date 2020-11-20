@@ -41,6 +41,23 @@ h2 {
     right: 12px;
 }
 
+select {
+    background: none;
+    color: white;
+    padding: 4px 8px;
+    border: 1px solid white;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+option {
+    background: steelblue;
+    color: white;
+    padding: 4px 8px;
+    border: 1px solid white;
+}
+
 button {
     background: none;
     color: white;
@@ -51,12 +68,12 @@ button {
     -moz-appearance: none;
 }
 
-button:hover {
+button:hover, select:hover {
     background: white;
     color: steelblue;
 }
 
-button:focus {
+button:focus, select:focus {
     outline: 0px transparent !important;
 }
 
@@ -142,4 +159,12 @@ button:focus {
 
 .hidden {
     display: none;
+}
+
+#diagram-image .messageText {
+    stroke: none !important;
+}
+
+#diagram-image text {
+    alignment-baseline: middle !important;
 }

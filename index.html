@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Messaging Diagram</title>
+        <title>Diagram Editor</title>
 
         <script src="mermaid.min.js"></script>
         <link rel="stylesheet" href="style.css" type="text/css" media="screen" />
@@ -23,24 +23,27 @@ Licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache Licen
             </p>
             <button id="close-help">Close</button>
         </div>
-        <h1>Messaging Diagram Editor</h1>
+        <h1>Diagram Editor</h1>
         <div id="buttons">
+            <select id="diagram-type">
+                <option value="classDiagram">Class Diagram</option>
+                <option value="gantt">Gantt Chart</option>
+                <option value="graph LR">Flowchart (horizontal)</option>
+                <option value="graph TD">Flowchart (vertical)</option>
+                <option value="journey">Journey</option>
+                <option value="pie">Pie Chart</option>
+                <option value="sequenceDiagram" selected>Sequence Diagram</option>
+                <option value="stateDiagram">State Diagram</option>
+            </select>
             <button id="about">About</button>
             <button id="download">Download</button>
-            <button id="show-source" class="hidden">Source</button>
-            <button id="hide-source">Max</button>
+            <button id="show-source" class="hidden">Edit</button>
+            <button id="hide-source">View</button>
         </div>
         <div id="editor-container">
             <div id="editor">
                 <h2>Source</h2>
-                <textarea id="source" rows="20" cols="60">
-browser -> server: request
-server -> server: process
-participant database
-note over server,database: add DB calls
-server --> browser: response 
-note left of browser: display\nto user
-</textarea>
+                <textarea id="source" rows="20" cols="60"></textarea>
             </div>
         </div>
         <div id="diagram"></div>
