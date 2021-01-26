@@ -81,6 +81,23 @@ function formatSource(src) {
     const newType = document.getElementById("diagram-type").value;
 
     if (newType === "sequenceDiagram") {
+        src = src.split("\n")
+                 .map(line => {
+                    if (!line.match(/->.*->.*:/)) {
+                        return line;
+                    }
+
+                    const [hops, payload] = line.split(/:/);
+                    const hopList = hops.split("->");
+                    const decomposedHops = [];
+                    for (let i = 0 ; i < hopList.length - 1 ; i++) {
+                        decomposedHops.push(hopList[i] + "->" + hopList[i + 1] + ":" + payload);
+                    }
+
+                    return decomposedHops.join("\n");
+                 })
+                 .join("\n");
+
         src = src.replace(/->/g, "->>");
     }
 
