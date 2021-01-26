@@ -77,27 +77,71 @@ const diagrams = {
 setupFileDrop();
 typeSelected();
 
+function splitMultiArrow(src) {
+    return src.split("\n")
+             .map(line => {
+                if (!line.match(/->.*->.*:/)) {
+                    return line;
+                }
+
+                const [hops, payload] = line.split(/:/);
+                const hopList = hops.split("->");
+                const decomposedHops = [];
+                for (let i = 0 ; i < hopList.length - 1 ; i++) {
+                    decomposedHops.push(hopList[i] + "->" + hopList[i + 1] + ":" + payload);
+                }
+
+                return decomposedHops.join("\n");
+             })
+             .join("\n");
+}
+
+function extractMacros(src) {
+    const macros = {};
+    let macro = null;
+    let trimmed = src;
+
+    while (macro = trimmed.match(/#defmacro +(\S+)\s*(\S[\s\S]*?)#endmacro/)) {
+        trimmed = trimmed.replace(macro[0], "");
+        macros[macro[1]] = macro[2];
+    }
+
+    return {
+        trimmed,
+        macros
+    };
+}
+
+function applyMacros(src, macros) {
+
+    Object.keys(macros).forEach(macro => {
+        const regex = new RegExp("#" + macro + ".*", "m");
+        let match = regex.exec(src);
+
+        while (match) {
+            const args = match[0].split(/\s+/).slice(1);
+            let expanded = macros[macro];
+
+            for ( let i = 0; i < args.length; i++ ) {
+                let argRegex = new RegExp("\\$" + (i + 1), "g");
+                expanded = expanded.replace(argRegex, args[i]);
+            }
+
+            src = src.replace(regex, expanded);
+            match = regex.exec(src);
+        }
+    });
+
+    return src;
+}
+
 function formatSource(src) {
     const newType = document.getElementById("diagram-type").value;
 
     if (newType === "sequenceDiagram") {
-        src = src.split("\n")
-                 .map(line => {
-                    if (!line.match(/->.*->.*:/)) {
-                        return line;
-                    }
-
-                    const [hops, payload] = line.split(/:/);
-                    const hopList = hops.split("->");
-                    const decomposedHops = [];
-                    for (let i = 0 ; i < hopList.length - 1 ; i++) {
-                        decomposedHops.push(hopList[i] + "->" + hopList[i + 1] + ":" + payload);
-                    }
-
-                    return decomposedHops.join("\n");
-                 })
-                 .join("\n");
-
+        const {trimmed, macros} = extractMacros(src);
+        src = applyMacros(trimmed, macros);
+        src = splitMultiArrow(src);
         src = src.replace(/->/g, "->>");
     }
 
