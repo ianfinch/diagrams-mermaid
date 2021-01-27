@@ -98,17 +98,27 @@ function splitMultiArrow(src) {
 
 function extractMacros(src) {
     const macros = {};
+    const defs = {};
     let macro = null;
     let trimmed = src;
 
+    // Look for multiline macros
     while (macro = trimmed.match(/#defmacro +(\S+)\s*(\S[\s\S]*?)#endmacro/)) {
         trimmed = trimmed.replace(macro[0], "");
         macros[macro[1]] = macro[2];
     }
 
+    // Look for one line definitions
+    macro = null;
+    while (macro = trimmed.match(/#def\s+(\S+)\s*(.*)/m)) {
+        trimmed = trimmed.replace(macro[0], "");
+        defs[macro[1]] = macro[2];
+    }
+
     return {
         trimmed,
-        macros
+        macros,
+        defs
     };
 }
 
@@ -135,12 +145,24 @@ function applyMacros(src, macros) {
     return src;
 }
 
+function applyDefs(src, defs) {
+    let result = src;
+
+    Object.keys(defs).forEach(def => {
+        const regex = new RegExp("\\$" + def, "g");
+        result = result.replace(regex, defs[def]);
+    });
+
+    return result;
+}
+
 function formatSource(src) {
     const newType = document.getElementById("diagram-type").value;
 
     if (newType === "sequenceDiagram") {
-        const {trimmed, macros} = extractMacros(src);
+        const {trimmed, macros, defs} = extractMacros(src);
         src = applyMacros(trimmed, macros);
+        src = applyDefs(src, defs);
         src = splitMultiArrow(src);
         src = src.replace(/->/g, "->>");
     }
